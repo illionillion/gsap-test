@@ -1,26 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { ReactElement, useEffect, useRef } from "react";
+import "./App.css";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/all";
 
-function App() {
+const App = (): ReactElement => {
+
+  const pText = useRef(null)
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    setAnimation();
+
+    gsap.to(pText.current, {
+      color: '#fff',
+      backgroundImage: "linear-gradient(to left, #30CFD0, #330867)",
+      duration: 5
+    });
+    
+  }, [pText]);
+
+  const setAnimation = () => {
+    gsap.fromTo(
+      "#wrapper-a p",
+      { opacity: 0, y: 10 }, //fromの設定
+      {
+        //toの設定
+        opacity: 1,
+        y: 0,
+        duration: 2,
+        scrollTrigger: {
+          trigger: "#wrapper-a",
+          start: "top center", //要素のトップが、画面の中央まできたら開始
+          end: "bottom center", //要素のボトムが、画面の中央まできたら終了
+          onEnter: () => {
+            console.log("scroll In");
+          },
+          onEnterBack: () => {
+            console.log("scroll Back");
+          },
+        },
+      }
+    );
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="wrapper" id="wrapper-a">
+        <p ref={pText}>TEST ANIMATION</p>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
